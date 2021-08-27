@@ -5,6 +5,8 @@ import "gorm.io/gorm"
 type Repository interface {
 	Save(user User) (User, error)
 	FindbyEmail(email string) (User, error)
+	FindbyID(ID int) (User, error)
+	Update(user User) (User, error)
 }
 
 type repository struct {
@@ -28,6 +30,27 @@ func (r *repository) FindbyEmail(email string) (User, error) {
 	//check if email already registered
 	err := r.db.Where("email = ?", email).Find(&user).Error
 
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+//upload avatar
+func (r *repository) FindbyID(ID int) (User, error) {
+	var user User
+	//check data by ID
+	err := r.db.Where("id = ?", ID).Find(&user).Error
+
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+func (r *repository) Update(user User) (User, error) {
+	err := r.db.Save(&user).Error
 	if err != nil {
 		return user, err
 	}
