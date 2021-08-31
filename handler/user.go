@@ -165,7 +165,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 	// harusnya dapet dari JWT (sementara hardcode)
-	userID := 1
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
 	// path lama images/namafile.jpg
 	// path := "images/" + file.Filename
 
