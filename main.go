@@ -6,7 +6,6 @@ import (
 	"crowdfund-go/handler"
 	"crowdfund-go/helper"
 	"crowdfund-go/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -33,9 +32,7 @@ func main() {
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 
-	campaigns, _ := campaignServices.FindCampaigns(0)
-	fmt.Println(len(campaigns))
-
+	campaignHandler := handler.NewCampaignHandler(campaignServices)
 	userHandler := handler.NewUserHandler(userService, authService)
 
 	// Route Golang
@@ -45,6 +42,9 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
+	// get data
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	router.Run()
 }
