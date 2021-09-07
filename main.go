@@ -37,6 +37,7 @@ func main() {
 
 	// Route Golang
 	router := gin.Default()
+	// static image route
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
 	api.POST("/users", userHandler.RegisterUser)
@@ -46,6 +47,7 @@ func main() {
 
 	// get data
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 
 	router.Run()
 }
