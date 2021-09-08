@@ -70,6 +70,8 @@ type CampaignImageFormatter struct {
 }
 
 func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
+
+	//detail campaign
 	campaignDetailFormatter := CampaignDetailFormatter{}
 
 	campaignDetailFormatter.ID = campaign.ID
@@ -91,7 +93,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 		perks = append(perks, strings.TrimSpace(perk))
 	}
 	campaignDetailFormatter.Perks = perks
-
+	//user
 	user := campaign.User
 	campaignUserFormatter := CampaignUserFormatter{}
 
@@ -99,8 +101,8 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 	campaignUserFormatter.ImageURL = user.AvatarFileName
 	campaignDetailFormatter.User = campaignUserFormatter
 
+	//for image
 	images := []CampaignImageFormatter{}
-
 	for _, image := range campaign.CampaignImages {
 		campaignImageFormatter := CampaignImageFormatter{}
 		campaignImageFormatter.ImageURL = image.FileName

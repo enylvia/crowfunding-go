@@ -3,6 +3,7 @@ package campaign
 type Service interface {
 	GetCampaigns(userID int) ([]Campaign, error)
 	GetCampaignByID(input GetCampaignDetailInput) (Campaign, error)
+	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 }
 
 type service struct {
@@ -36,4 +37,24 @@ func (s *service) GetCampaignByID(input GetCampaignDetailInput) (Campaign, error
 		return campaign, err
 	}
 	return campaign, nil
+}
+func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
+	//mapping campaign
+	campaign := Campaign{}
+
+	campaign.Name = input.Name
+	campaign.ShortDescription = input.ShortDescription
+	campaign.Description = input.Description
+	campaign.GoalAmount = input.GoalAmount
+	campaign.Perks = input.Perks
+	campaign.UserID = input.User.ID
+
+	//proses pembuatan slug
+
+	newCampaign, err := s.repository.Save(campaign)
+
+	if err != nil {
+		return newCampaign, err
+	}
+	return newCampaign, nil
 }
