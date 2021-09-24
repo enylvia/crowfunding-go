@@ -3,6 +3,7 @@ package handler
 import (
 	"crowdfund-go/campaign"
 	"crowdfund-go/helper"
+	"crowdfund-go/user"
 	"net/http"
 	"strconv"
 
@@ -65,6 +66,28 @@ func (h *campaignHandler) GetCampaign(c *gin.Context) {
 }
 
 //tangkap parameter dari user ke input struct
-//ambil currentuser dari jwt/handler
-//panggil service dimana service parameter nya adalah input struct tadi (slug berdasarkan nama campaign)
-//pangigl repository untuk save data campaign
+func (h *campaignHandler) CreateCampaign(c *gin.Context) {
+	var input campaign.CreateCampaignInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		//gin.H adalah map yang key nya string namun valuenya interface
+		errorMessage := gin.H{"errors": errors}
+		response := helper.ApiResponse("Failed to create campaign", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	newCampaign, err := h.service.CreateCampaign(input)
+	if err != nil {
+		response := helper.ApiResponse("Failed to create campaign", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.ApiResponse("Success to create campaign", http.StatusOK, "success", campaign.FormatCampaign(newCampaign))
+	c.JSON(http.StatusOK, response)
+
+}
