@@ -5,6 +5,7 @@ import (
 	"crowdfund-go/campaign"
 	"crowdfund-go/handler"
 	"crowdfund-go/helper"
+	"crowdfund-go/transaction"
 	"crowdfund-go/user"
 	"log"
 	"net/http"
@@ -27,6 +28,7 @@ func main() {
 	}
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
+	transactionRepository := transaction.NewRepository(db)
 
 	campaignServices := campaign.NewService(campaignRepository)
 	userService := user.NewService(userRepository)
