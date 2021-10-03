@@ -33,9 +33,11 @@ func main() {
 	campaignServices := campaign.NewService(campaignRepository)
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
+	transactionService := transaction.NewService(transactionRepository)
 
 	campaignHandler := handler.NewCampaignHandler(campaignServices)
 	userHandler := handler.NewUserHandler(userService, authService)
+	transactionsHandler := handler.NewTransactionHandler(transactionService)
 
 	// Route Golang
 	router := gin.Default()
@@ -54,6 +56,7 @@ func main() {
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.POST("/campaigns-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
 
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionsHandler.GetCampaignTransactions)
 	router.Run()
 }
 
