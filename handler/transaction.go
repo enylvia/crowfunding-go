@@ -3,6 +3,7 @@ package handler
 import (
 	"crowdfund-go/helper"
 	"crowdfund-go/transaction"
+	"crowdfund-go/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,12 +26,14 @@ func (h *transactionHandler) GetCampaignTransactions(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	transaction, err := h.service.GetTransactionsByCampaignID(input)
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+	transactions, err := h.service.GetTransactionsByCampaignID(input)
 	if err != nil {
 		response := helper.ApiResponse("Failed to get campaign transaction", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.ApiResponse("List Of Transactions", http.StatusOK, "success", transaction)
+	response := helper.ApiResponse("List Of Transactions", http.StatusOK, "success", transaction.FormatCampaignTransactions(transactions))
 	c.JSON(http.StatusOK, response)
 }
