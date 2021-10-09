@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -43,6 +44,7 @@ func main() {
 
 	// Route Golang
 	router := gin.Default()
+	router.Use(cors.Default())
 	// static image route
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
@@ -61,6 +63,7 @@ func main() {
 	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionsHandler.GetCampaignTransactions)
 	api.GET("/transactions", authMiddleware(authService, userService), transactionsHandler.GetUserTransactions)
 	api.POST("/transactions", authMiddleware(authService, userService), transactionsHandler.CreateTransaction)
+	api.POST("/transactions/notification", transactionsHandler.GetNotification)
 	router.Run()
 }
 
